@@ -19,8 +19,7 @@ class Robot
     protected const LEFT_TURN = 'L';
 
     /**
-     * @param int $x
-     * @param int $y
+     * @param string $command
      */
     public function __construct(string $command)
     {
@@ -35,6 +34,10 @@ class Robot
             ->output();
     }
 
+    /**
+     * Runs the command that has been parsed
+     * @return $this
+     */
     private function executeCommand()
     {
         foreach($this->commands as $key => $command){
@@ -115,11 +118,19 @@ class Robot
         return $this;
     }
 
+    /**
+     * Prints output to the console
+     */
     private function output()
     {
         printf("X: %d Y: %d Direction: %s.",$this->x,$this->y,$this->directions[$this->finalDirection]);
     }
 
+    /**
+     * Parses the command recieved from the CLI to a format
+     * that the robot can respond tp
+     * @return $this
+     */
     private function parseCommand()
     {
         for($i = 0; $i < strlen($this->command); $i++){
@@ -142,7 +153,13 @@ class Robot
         return $this;
     }
 
-    private function evaluateStepsInDirection($direction,$key,$commands)
+    /**
+     * @param $direction
+     * @param $key
+     * @param $commands
+     * @return int|mixed|void
+     */
+    private function evaluateStepsInDirection($direction, $key, $commands)
     {
         $checker = 1;
         $steps = 0;

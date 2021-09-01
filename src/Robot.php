@@ -17,6 +17,7 @@ class Robot
     protected const WEST = 3;
     protected const RIGHT_TURN = 'R';
     protected const LEFT_TURN = 'L';
+    protected const WALK = 'W';
 
     /**
      * @param string $command
@@ -42,78 +43,77 @@ class Robot
     {
         foreach($this->commands as $key => $command){
 
-            if($key == 0 && !in_array($command, [self::RIGHT_TURN,SELF::LEFT_TURN])){
+            if($key == 0 && !in_array($command, [self::RIGHT_TURN,self::LEFT_TURN])){
                 $checker = $key;
                 do{
-                    $stepCount = str_replace('W','',$this->commands[$checker]);
+                    $stepCount = str_replace(self::WALK,'',$this->commands[$checker]);
 
                     $this->y = eval("return $this->y + $stepCount;");
                     $checker++;
-                }while(!in_array($this->commands[$checker], [self::RIGHT_TURN,SELF::LEFT_TURN]));
+                }while(!in_array($this->commands[$checker], [self::RIGHT_TURN,self::LEFT_TURN]));
 
                 continue;
             }
 
-            if($this->finalDirection == self::NORTH){
-                if($command == self::RIGHT_TURN){
-                    $this->xOperator = '+';
-                    $this->finalDirection = self::EAST;
-                }
+            switch($this->finalDirection){
+                case self::NORTH:
+                    if($command == self::RIGHT_TURN){
+                        $this->xOperator = '+';
+                        $this->finalDirection = self::EAST;
+                    }
 
-                elseif($command == SELF::LEFT_TURN){
-                    $this->xOperator = '-';
-                    $this->finalDirection = self::WEST;
-                }
+                    elseif($command == self::LEFT_TURN){
+                        $this->xOperator = '-';
+                        $this->finalDirection = self::WEST;
+                    }
 
-                $this->x += $this->evaluateStepsInDirection($this->xOperator,$key,$this->commands);
-                continue;
+                    $this->x += $this->evaluateStepsInDirection($this->xOperator,$key,$this->commands);
+                    break;
+
+                case self::WEST:
+                    if($command == self::RIGHT_TURN){
+                        $this->yOperator = '+';
+                        $this->finalDirection = self::NORTH;
+                    }
+
+                    elseif($command == self::LEFT_TURN){
+                        $this->yOperator = '-';
+                        $this->finalDirection = self::SOUTH;
+                    }
+
+                    $this->y += $this->evaluateStepsInDirection($this->yOperator,$key,$this->commands);
+                    break;
+
+                case self::SOUTH:
+                    if($command == self::RIGHT_TURN){
+                        $this->xOperator = '-';
+                        $this->finalDirection = self::WEST;
+                    }
+
+                    elseif($command == self::LEFT_TURN){
+                        $this->xOperator = '+';
+                        $this->finalDirection = self::EAST;
+                    }
+
+                    $this->x += $this->evaluateStepsInDirection($this->xOperator,$key,$this->commands);
+                  break;
+
+                case self::EAST:
+                    if($command == self::RIGHT_TURN){
+                        $this->yOperator = '-';
+                        $this->finalDirection = self::SOUTH;
+                    }
+
+                    elseif($command == self::LEFT_TURN){
+                        $this->yOperator = '+';
+                        $this->finalDirection = self::NORTH;
+                    }
+
+                    $this->y += $this->evaluateStepsInDirection($this->yOperator,$key,$this->commands);
+                    break;
+                default:
+                    break;
             }
-
-            if($this->finalDirection == self::WEST){
-                if($command == self::RIGHT_TURN){
-                    $this->yOperator = '+';
-                    $this->finalDirection = self::NORTH;
-                }
-
-                elseif($command == SELF::LEFT_TURN){
-                    $this->yOperator = '-';
-                    $this->finalDirection = self::SOUTH;
-                }
-
-                $this->y += $this->evaluateStepsInDirection($this->yOperator,$key,$this->commands);
-                continue;
-            }
-
-            if($this->finalDirection == self::SOUTH){
-                if($command == self::RIGHT_TURN){
-                    $this->xOperator = '-';
-                    $this->finalDirection = self::WEST;
-                }
-
-                elseif($command == SELF::LEFT_TURN){
-                    $this->xOperator = '+';
-                    $this->finalDirection = self::EAST;
-                }
-
-                $this->x += $this->evaluateStepsInDirection($this->xOperator,$key,$this->commands);
-                continue;
-            }
-
-            if($this->finalDirection == self::EAST){
-                if($command == self::RIGHT_TURN){
-                    $this->yOperator = '-';
-                    $this->finalDirection = self::SOUTH;
-                }
-
-                elseif($command == SELF::LEFT_TURN){
-                    $this->yOperator = '+';
-                    $this->finalDirection = self::NORTH;
-                }
-
-                $this->y += $this->evaluateStepsInDirection($this->yOperator,$key,$this->commands);
-
-            }
-
         }
         return $this;
     }
@@ -138,10 +138,10 @@ class Robot
                 case self::RIGHT_TURN:
                     $this->commands[] = self::RIGHT_TURN;
                     break;
-                case SELF::LEFT_TURN:
-                    $this->commands[] = SELF::LEFT_TURN;
+                case self::LEFT_TURN:
+                    $this->commands[] = self::LEFT_TURN;
                     break;
-                case 'W':
+                case self::WALK:
                     $this->commands[] = array_shift($this->walkingCommands[0]);
                     break;
                 default:
@@ -164,13 +164,13 @@ class Robot
         $checker = 1;
         $steps = 0;
 
-        if(!in_array($commands[$key],[self::RIGHT_TURN,SELF::LEFT_TURN])){
+        if(!in_array($commands[$key],[self::RIGHT_TURN,self::LEFT_TURN])){
             return;
         }
 
-        while(isset($commands[$key+$checker]) && !in_array($commands[$key+$checker],[self::RIGHT_TURN,SELF::LEFT_TURN])){
+        while(isset($commands[$key+$checker]) && !in_array($commands[$key+$checker],[self::RIGHT_TURN,self::LEFT_TURN])){
 
-            $stepCount = str_replace('W','',$commands[$key+$checker]);
+            $stepCount = str_replace(self::WALK,'',$commands[$key+$checker]);
 
             $steps = eval("return $steps $direction  $stepCount;");
             $checker++;

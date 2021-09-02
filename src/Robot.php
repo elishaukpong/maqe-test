@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * This file is part of the Mage Backend Engineer Test.
+ *
+ *
+ * @version         1.0
+ *
+ * @author          Elisha Ukpong
+ * @license         MIT Licence
+ * @copyright       (c) Elisha Ukpong <ishukpong418@gmail.com>
+ *
+ * @link            https://github.com/elishaukpong/maqe-test
+ */
+
 class Robot
 {
     protected $x = 0;
@@ -28,6 +41,9 @@ class Robot
         preg_match_all('/W[0-9]+/', $command, $this->walkingCommands);
     }
 
+    /**
+     * The application entrance
+     */
     public function handle()
     {
         $this->parseCommand()
@@ -148,8 +164,8 @@ class Robot
                     break;
             }
         }
-        unset($this->command);
-        unset($this->walkingCommands);
+        unset($this->command); //optional to unset
+        unset($this->walkingCommands); //optional to unset
         return $this;
     }
 
@@ -169,9 +185,7 @@ class Robot
         }
 
         while(isset($commands[$key+$checker]) && !in_array($commands[$key+$checker],[self::RIGHT_TURN,self::LEFT_TURN])){
-
             $stepCount = str_replace(self::WALK,'',$commands[$key+$checker]);
-
             $steps = eval("return $steps $direction  $stepCount;");
             $checker++;
         }
